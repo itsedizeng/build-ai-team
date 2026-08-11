@@ -1,0 +1,7 @@
+interface:
+  display_name: "Build AI Team"
+  short_description: "判断单／多 Agent，规划角色、模型并推荐相关 Skill"
+  default_prompt: "使用 $build-ai-team 分析我的需求，给出最小可靠的团队、模型和相关 Skill 建议。"
+
+policy:
+  allow_implicit_invocation: false
