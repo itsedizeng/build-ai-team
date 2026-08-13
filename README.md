@@ -6,6 +6,8 @@
 
 **Choose one Agent or the smallest reliable persistent AI team—with clear ownership, role-specific model routing, and source-aware Skill discovery.**
 
+Optimized for diverse real-world scenarios, including software, product, design, research, data, content, migrations, and releases.
+
 Give Build AI Team a real request. It works backward from the final result, keeps one Agent when that is enough, and adds a persistent role only when ownership, separation, or collaboration value is concrete.
 
 ```text
