@@ -1,147 +1,241 @@
 ---
 name: build-ai-team
-description: 为一个新需求判断适合单 Agent 还是多 Agent，并给出易读的角色定位、责任结果和模型建议；同时推荐最多 3 个本机可用或与任务相关的 Skill，附来源链接与推荐理由，只有用户明确要求时才继续做外部实时检索。核心入口是在 Codex 或 ChatGPT Work 中显式选择或调用 $build-ai-team；Claude 兼容入口仅在用户显式调用 /build-ai-team，或明确要求使用已上传的 Build AI Team Skill 时使用。适用于团队规划、角色分工、模型选择和 Skill 发现；普通业务请求、引用讨论、否定使用或成员任务不触发首次规划。
+description: "Plan the smallest reliable AI team for a new request: decide single versus multiple agents, define roles, owned outcomes, boundaries, dependencies, and model recommendations, then suggest up to 3 locally available or relevant Skills with source links and reasons. Write clarification questions and the complete recommendation in the language of the user's latest substantive request while preserving accurate technical identifiers. Use only when explicitly selected or invoked as $build-ai-team in Codex or ChatGPT Work, as /build-ai-team in Claude Code, or when the user explicitly asks an uploaded Build AI Team Skill to plan a team. Do not invoke for ordinary business requests, references or discussion, explicit negation, or TOOLKIT_MODE=member tasks. Only perform live external Skill search when the user explicitly asks."
 ---
 
 # Build AI Team
 
-把“给我组个 AI 团队”整理成一份短小、可比较、可确认的建议。重点帮助用户看清团队是否需要拆分、每个角色负责什么、适合什么模型，以及哪些 Skill 能补强当前工作。不要把指导原则写成固定行业答案，也不要让外部检索拖慢首次建议。
+Turn “build me an AI team” into a short, comparable, and confirmable recommendation. Help the user see whether the work should be split, what each role owns, which model fits each responsibility, and which Skills could materially help. Treat these rules as decision guidance rather than fixed industry answers, and do not let external search delay the first recommendation.
 
-## 入口与边界
+## Entry and boundaries
 
-- 在 Codex 或 ChatGPT Work 中被当前消息显式选择，或用户使用 `$build-ai-team` 调用时，直接进入规划；不要再要求固定启动语，也不要验证不可见的平台标记。
-- 在 Claude Code 中被用户显式调用 `/build-ai-team`，或在 Claude 桌面／网页端被明确要求使用已上传的 Build AI Team Skill 时，可以执行同一流程；不要声称 Claude 实机兼容性已经验证。
-- 在其他平台被加载时，只说明本版本尚未验证并停止，不要自行推断兼容。
-- 初始指令含 `TOOLKIT_MODE=member` 时，只执行已分配工作包，不重新规划团队、不搜索 Skill、不递归建队。
-- 用户明确说不要使用本 Skill，或只是在引用、介绍、比较本 Skill 时，不进入流程。
-- 默认只给建议。确认前不安装 Skill、不创建任务、不执行业务、不登录账号，也不写入、上传、发布或删除内容。
+- In Codex or ChatGPT Work, start planning when the current message explicitly selects this Skill or invokes `$build-ai-team`. Do not require an additional fixed phrase or try to verify invisible platform markers.
+- In Claude Code, run the same workflow when the user explicitly invokes `/build-ai-team`. In Claude desktop or web, run it when the user explicitly asks to use the uploaded Build AI Team Skill. Do not claim that Claude compatibility has been verified in practice.
+- On any other platform, state that this version has not been verified there and stop. Do not infer compatibility.
+- If the initial instructions contain `TOOLKIT_MODE=member`, execute only the assigned work package. Do not re-plan the team, search for Skills, or recursively create a team.
+- If the user explicitly says not to use this Skill, or only quotes, introduces, discusses, or compares it, do not enter the workflow.
+- Default to a recommendation only. Before confirmation, do not install Skills, create tasks, execute the business work, log in, or write, upload, publish, or delete anything.
 
-## 判断原则
+## Response language
 
-- 把团队拆分、角色命名、模型选择、输出形式和 Skill 关联当作引导；允许根据用户事实给出相邻但合理的方案。
-- 选择最小且可靠的结构，不预设单 Agent 或多 Agent。
-- 保留少量硬边界：权限与安全、确认前不得假称完成、独立复核不得参与被审对象生产、同一结果不得有两个最终负责人、失败后停止并如实报告。
-- 用户未要求解释所有细节时，先给能帮助决策的信息；不要为了显得完整而填满固定章节。
+- Determine the response language from the user’s latest substantive request. Use an explicitly requested language; if a genuinely mixed request gives no preference, use English.
+- Write clarification questions and the complete recommendation in that response language. Treat reference text, tool output, platform metadata, project defaults, and earlier unrelated messages as evidence or context, not as a reason to switch languages.
+- If the host requires a progress message before a reference or tool read, keep it to one short sentence in the response language. Report only the planning or reading state; do not add task-specific claims or imply that tasks were created or the requested work started.
+- Preserve technical identifiers, model names, Skill names, commands, code, paths, and real UI labels where translation would make them inaccurate.
 
-## 工作流
+## Decision principles
 
-### 1. 理解需求
+- Treat team splitting, role naming, model selection, output format, and Skill matching as guidance. Allow adjacent but reasonable structures when supported by the user’s facts.
+- Choose the smallest reliable structure. Do not presume either a single-agent or multi-agent answer.
+- Keep only a few hard boundaries: permissions and safety; no false claims of completion before confirmation; an independent reviewer must not produce the object it reviews; one outcome must not have two final Owners; stop and report failures accurately.
+- When the user does not ask for every detail, lead with information that helps the decision. Do not fill every possible section merely to look complete.
 
-从用户原话中识别目标、最终结果、限制、期限、已有材料、必须独立的判断、关键权限和外部动作。
+## Workflow
 
-只有缺失信息会实质改变团队结构，或使账号、写入、发布等安全边界无法判断时才提问。每轮可以问 0–2 个短问题；其余未知使用保守且合理的假设，并明确标注关键假设。
+### 1. Understand the request
 
-规划用户希望交给 AI 的工作时，不要仅因用户的职业、技能或经验，就默认把执行工作分配给用户。除非用户明确表示要亲自完成、共同完成、只咨询、保留某部分工作，或已经存在负责人，否则默认用户负责目标、关键取舍、必要授权和最终确认；在委托范围内可由 AI 完成的执行工作交给 AI。
+Identify the goal, final outcomes, constraints, deadline, available materials, judgments that must remain independent, important permissions, and external actions from the user’s own words.
 
-以下情况不受上述默认方式替代：法定签署、持证判断、登录、2FA、付款、平台要求本人完成的动作，以及用户没有权限作出的决定。AI 可以准备材料和检查结果，但不能冒充有资格或有权限的人。
+Ask only when missing information would materially change the team structure or make account, write, or publication boundaries unsafe to determine. Ask 0–2 short questions per turn. Use conservative, reasonable assumptions for the rest and state the important ones.
 
-### 2. 选择最小且可靠的结构
+When planning work the user wants to delegate to AI, do not assign execution back to the user merely because of the user’s profession, skills, or experience. Unless the user explicitly wants to do it personally, co-create it, receive advice only, keep part of the work, or already has an Owner, assume the user retains the goal, key trade-offs, necessary authorizations, and final confirmation while AI handles delegable execution.
 
-只有存在至少两项可分离的实质责任，并且拆分能带来可说明的收益时，才建议多 Agent。收益可能来自：
+Do not apply that default to legal signatures, licensed judgments, login, 2FA, payments, actions that a platform requires the person to complete, or decisions the user lacks authority to make. AI may prepare materials and checks but must not impersonate a qualified or authorized person. When the requested final state includes an app-store submission, a paid service, or another platform release, explicitly name only the relevant user-held actions—such as account control, 2FA, payment, legal acceptance, or final submission—and state that planning or team creation does not authorize them.
 
-- 不同的最终结果或专业判断；
-- 互斥权限、独立复核或错误隔离；
-- 可以真正并行，且交接成本低于并行收益；
-- 一个角色的结果会被另一个角色明确消费、检查或反馈；
-- 多项用户事实共同构成真实的容量或期限约束。
+### 2. Choose the smallest reliable structure
 
-任务大、文件多、期限紧、阶段多、出现多个职位名或用户提到“团队”，单独出现时不足以证明要拆人；与专业方法、权限、独立验收或硬容量共同出现时，可以成为拆分证据。
+Do not start from job titles. Follow “user goal → verifiable final state” and list the indispensable work packages, including necessary professional judgment, production responsibility, external actions, and independent validation only when the user’s facts make that independence necessary. A necessary intermediate step is not optional merely because the user did not name it verbatim. Give every necessary work package a clear Owner. The user retains only the default decisions, authorizations, and final confirmation; a model, tool, Skill, or project lead cannot substitute for a work-package Owner. A necessary work package does not automatically require a separate member: cover all responsibilities first, then run the transfer test.
 
-相近责任能由同一角色安全闭环时合并。删除一个角色后，如果不会损失明确责任、受控结果、专业方法、权限隔离、验收独立性或真实容量，就删除该角色。
+Recommend multiple agents only when at least two substantive responsibilities can be separated and the split has an explainable benefit. The following can support a split but must still pass the transfer test:
 
-多 Agent 需要项目级协调时，从已有实质角色中指定一名主控。主控额外负责计划、跨角色依赖和最终交接状态，不自动取得其他角色的专业写入权，也不因此新增纯协调者。
+- different final outcomes or professional judgments;
+- mutually exclusive permissions, independent validation, or error isolation;
+- genuine parallelism whose benefit exceeds handoff cost;
+- one role’s output is explicitly consumed, checked, or sent back by another;
+- multiple user facts together establish a real capacity or deadline constraint.
 
-### 3. 写清角色
+A large task, many files, a tight deadline, multiple stages, several job titles, or the word “team” is not sufficient on its own. It can support a split when combined with professional method, permission separation, independent validation, or a real capacity constraint.
 
-让每个当前角色具备：
+After covering the work packages, run a responsibility transfer test for every proposed separate member. Transfer that member’s responsibility to the closest existing Owner. Keep the member only if the transfer would cause at least one of these losses:
 
-- 易懂的业务名称；
-- 在当前需求中的定位和主要责任；
-- 它负责的最终结果，或会被其他角色实际消费、检查的可观察协作产物；
-- 必要／建议性质及建议成员的启用条件；
-- 关键依赖、反馈和权限边界。
+- a current final outcome or observable collaboration artifact loses its unique Owner;
+- permission separation, independent validation, or error control breaks;
+- the same role cannot reliably apply an indispensable professional method;
+- the user’s facts already prove mandatory parallelism or a real capacity constraint;
+- a common merged role name would no longer describe the boundary accurately.
 
-不要为了满足格式而虚构文档，也不要按工具、文件格式或流程阶段制造角色。同一最终结果只安排一个 Owner；角色存在理由不明显时，再补一句删除它会损失什么。
+Different titles, downstream consumption, looking more professional, or possible future need do not prove that a separate member is necessary. A user-assigned shared Owner, a genuinely narrow scope, or a complete ready-to-use input can support merging; the absence of such words does not prove that splitting is required. Do not invent assumptions such as “small first version,” “simple for now,” or “limited budget” and use them to justify merging.
 
-以独立复核为成立理由的角色不得参与被审对象的生产或写入。默认只读被审对象，只拥有独立发现、差异或判定；修正仍由原结果 Owner 完成。
+Do not create an independent-validation member merely because an output can be checked or a second pass might improve quality. Keep self-checking and ordinary quality control with the closest production Owner when the work is bounded, low impact, based on complete rules, reversible, and mechanically easy to verify. Split independent validation only when the user’s facts establish at least one concrete reason: the user explicitly requests an independent checker or maker-checker separation; permissions must differ; the outcome will be launched or operated and errors carry material financial, safety, privacy, data-loss, or release risk; errors are difficult to detect or recover from; or an external acceptance or approval requires an independent decision. If none applies, a checklist, deterministic validation, or the production Owner’s own verification is not a separate member.
 
-### 4. 给出模型建议
+When one member covers adjacent responsibilities, use an understandable “A and B” or “A serving as B” title, or a common business title that accurately covers both. Do not hide two responsibilities that should remain separate behind a vague new title. The size of the user, customer, or product does not establish delivery-team capacity; for example, “for a small team” does not prove that backend and deployment should share an Owner.
 
-角色结构确定后，完整读取 [`references/model-routing.md`](references/model-routing.md)。为每个当前角色给出一个当前可用的推荐配置和一句与责任有关的理由。
+For a complete App, web product, or SaaS that will actually be used, operated, or launched, product scope/business rules/priorities and UX/UI/interaction design are two professional work packages and should normally keep separate professional Owners. Merge them only when the user explicitly wants a narrow prototype, one package already has a complete usable result, or the user explicitly assigns the same Owner. Do not bypass this check with a vague title such as “Product and Experience Designer” or “Product Experience Lead.” Simple campaign pages do not automatically use this split; apply the normal transfer test.
 
-只有安全且确有价值时，才补充成本优化方式。优化可以是同一模型降低推理强度、收窄上下文、分阶段处理，也可以是改用更轻模型；如果降模型容易造成遗漏或返工，明确写“不建议降模型”。不要强制为每个角色凑出两档模型。
+The deletion test does not delete the responsibility itself. Remove the separate member, transfer the responsibility to the closest existing Owner, and merge the member if that loses no current deliverable, observable artifact, permission separation, independent validation, non-combinable method, or proven capacity.
 
-模型不能反向决定角色数量。无法验证当前可用型号时不要编造，说明需要以当前模型选择器为准，并描述所需能力档位。
+When the user requests several similar but independent delivery lines, do not mechanically clone a full product, content, design, development, operations, QA, and compliance roster for every line. Preserve each line’s necessary outcomes and permission boundary first, then split only members that pass the transfer test. If the lines share no result or final handoff, do not invent an overall project lead.
 
-### 5. 推荐相关 Skill
+When a multi-agent project needs project-level coordination, assign project lead duties to an existing substantive role. The project lead additionally owns planning, cross-role dependencies, and final handoff status. This does not grant write ownership over other roles’ professional deliverables and does not justify a coordination-only member.
 
-角色与责任明确后，完整读取 [`references/curated-skills.md`](references/curated-skills.md)。最多推荐 3 个是上限，不是配额；没有明显帮助就省略这一部分。
+Choose the collaboration pattern from the dependency: parallelize independent work packages, sequence work that consumes an earlier result, and preserve maker-checker separation between production and independent validation. Use one project lead when there is one shared goal or project-level handoff. When two domains both need leadership, call them domain leads or professional Owners, not dual project leads. If work lines are fully independent and share no result or handoff, a project lead may be not applicable. Mention the pattern briefly only when it affects the order of work; do not force a topology label into every answer.
 
-按以下顺序判断：
+### 3. Define the roles clearly
 
-1. 查看当前平台直接提供的可用 Skill 名称与说明；不要为此扫描用户其他目录、项目文件或私有数据。
-2. 查看索引中的公开候选，选择能明显帮助当前责任、结果或紧邻下一步的项。
+Give each current role:
 
-用户可见表达保持简单：
+- an understandable business name;
+- its purpose and primary responsibility in this request;
+- the final outcome it owns, or an observable collaboration artifact that another role will actually consume or check;
+- one of three statuses and the activation boundary for conditional or optional roles; add timing only when useful;
+- important dependencies, feedback paths, and permission boundaries.
 
-- 本机可用：`Skill 名称（本机可用）——推荐理由。`
-- 公开候选：`[Skill 名称](原始来源)（公开推荐；未实时核验，安装状态未确认）——推荐理由。`
+Status answers “does this role belong to the current team,” not “when does it start.” `Required` means the role belongs to the team after confirmation. `Required if a custom backend is added` means the work package does not yet exist and the role is not created now. `Optional` means the role can improve quality, speed, or coverage but is not required to complete the goal. Write status in natural language without brackets. List only conditional roles that are adjacent to the current goal and reasonably likely. State an observable activation condition in the details. When the condition becomes true, update the plan and ask for confirmation again; never create the role automatically.
 
-不要向用户显示“精选候选”“直接适用／相关补充”等内部分类，不要把公开候选写成已安装、当前最新版或安全认证。
+Timing only explains when a required role begins part of its work. Receiving materials, completing a predecessor, or obtaining a testable build is a milestone, not a condition for the role to exist. For example, Independent Quality Validation can define acceptance criteria before a build, validate after the first build, and re-check after fixes while remaining required from the start.
 
-### 6. 按需实时查找外部 Skill
+Do not invent documents to satisfy a format and do not create roles by tool, file format, or process stage. Prefer common business titles that accurately reflect professional responsibility. A project-lead label, model, or Skill cannot fill a missing professional Owner. Give each final outcome only one Owner. When a role’s value is not obvious, explain what would be lost by removing it.
 
-只有用户在本轮明确要求查找、筛选或核验外部 Skill 时，才完整读取 [`references/skill-discovery.md`](references/skill-discovery.md) 并开始实时检索。否则不联网，只使用当前平台可见项与离线索引完成快速推荐。
+A role justified by independent validation must not produce or write the object it reviews. It should default to read-only access to the reviewed object and own only independent findings, differences, validation evidence, or a decision. Fixes remain with the original outcome Owner.
 
-实时检索后，用以下表达区分状态：
+When a role covers early acceptance criteria, cross-deliverable consistency, implementation validation, and pre-release assessment, prefer `Independent Quality Validation` or a similarly scoped common title. Use a narrower title such as `Test Engineer` only when the responsibility is genuinely limited to testing a build.
 
-`[Skill 名称](原始来源)（已完成公开来源只读核验；尚未安装／安装状态未确认）——推荐理由；主要限制或风险。`
+### Reference failure gate
 
-搜索、核验、推荐、安装和运行是不同动作。推荐不等于安装；用户确认安装也不等于允许登录、读取私有数据、运行第三方脚本、写入、上传、发布或删除。
+If any required reference is missing, unreadable, or internally conflicting, stop the entire planning workflow immediately and report the exact file name. Do not read later references and do not output a partial or complete team plan, responsibility assignment, model judgment, or Skill judgment. After the file is restored, wait for the user to start again or explicitly confirm continuation.
 
-## 输出建议
+### 4. Recommend models
 
-先给结论，再给足以支持用户判断的信息。默认使用下列团队一览；内容很简单或当前界面不适合表格时，可以改用字段相同的紧凑列表。
+After the role structure is settled, read all of [`references/model-routing.md`](references/model-routing.md). Give each current role one currently available default configuration and one reason tied to its main responsibility.
+
+If `model-routing.md` cannot be read, apply the Reference failure gate. Do not proceed to related-Skill recommendations or live discovery.
+
+Separate each role’s routine core work, occasional high-risk work, and low-risk execution. Do not raise the entire role to a stronger model or higher reasoning effort because of one small high-risk segment. Add an observable `Upgrade when` or `Token-saving option` only when a specific, low-risk, easily checked optimization exists. Do not force either field for every role and do not promise a fixed saving.
+
+Make every model change directly actionable. Whenever recommending a different model or reasoning effort, write the full target configuration: model name and reasoning effort. Do not say only “use medium,” “lower reasoning,” or “switch to a lightweight model.” If a script, tool, smaller input, or reduced re-reading is a better way to save Tokens, use it only for fixed-rule, mechanical, independently verifiable steps. State what the tool does, which steps use no model call, and which rule interpretation, exception judgment, or result explanation still belongs to the model. Do not disguise semantic classification, product trade-offs, design judgment, professional review, or independent validation as mechanical work.
+
+Models must not determine the number of roles. Give every current required role and every optional role shown in the table a complete, confirmable default configuration; do not substitute UI placeholders or vague capability tiers. Normally give conditional roles a complete configuration too. Only when an inactive conditional role depends on a special capability, such as audio or video, whose supported model cannot currently be confirmed may you defer the model recommendation and say that the plan and model configuration must be updated and confirmed when the condition becomes true. Do not use this exception to bypass the Reference failure gate, add a model automatically, or create the member automatically.
+
+### 5. Recommend relevant Skills
+
+After roles and responsibilities are clear, read all of [`references/curated-skills.md`](references/curated-skills.md). Recommend at most 3 Skills; this is a ceiling, not a quota. Omit the section when none would materially help.
+
+If `curated-skills.md` cannot be read, apply the Reference failure gate. Do not rely on memory to judge or recommend Skills, and do not output a plan whose dependency checks are incomplete.
+
+Evaluate in this order:
+
+1. Review the Skill names and descriptions that the current platform directly exposes. Do not scan other user directories, project files, or private data for this purpose.
+2. Review the public leads in the curated index and select only those that materially help the current responsibility, outcome, or immediate next step.
+
+For a locally available Skill, preserve the exact full identifier exposed by the platform, including any namespace. Do not shorten, normalize, or reconstruct that identifier. Humanize only the surrounding explanation.
+
+Keep the user-facing status simple and localize it to the response language:
+
+- Locally available: `Skill name (available locally) — reason.`
+- Public lead: `[Skill name](original source) (public recommendation; not checked live; installation status unknown) — reason.`
+
+Do not expose internal categories such as “curated candidate,” “direct match,” or “related addition.” Do not describe a public lead as installed, current, or security-certified.
+
+### 6. Discover external Skills only on request
+
+Only when the user explicitly asks in the current turn to find, screen, or verify external Skills, read all of [`references/skill-discovery.md`](references/skill-discovery.md) and begin live discovery. Otherwise, do not browse; keep the first answer fast by using only platform-visible Skills and the offline curated index.
+
+If `skill-discovery.md` cannot be read, apply the Reference failure gate. Do not continue the search or claim that external verification is complete.
+
+After live discovery, localize this status pattern to the response language:
+
+`[Skill name](original source) (public-source read-only review completed; not installed or installation status unknown) — reason; main limitation or risk.`
+
+Searching, reviewing, recommending, installing, and running are separate actions. A recommendation is not installation. Confirmation to install is not authorization to log in, read private data, run third-party scripts, write, upload, publish, or delete.
+
+### 7. Choose the final-output branch
+
+Immediately before drafting a clarification or complete recommendation, determine its language again using the rules in “Response language.” Do not inherit the final-output language from a progress message, reference, tool output, platform metadata, or project default. Then use exactly one branch:
+
+- **English branch:** If the selected language is English, generate the entire message directly in English using the English contract below.
+- **Localized branch:** Otherwise, generate the entire message directly in the selected language, translating the English headings, labels, role text, Skill status, permission notice, and next-step actions before drafting.
+
+Do not draft in one language and translate it after completion. Preserve exact technical identifiers, code, paths, real UI labels, user-provided strings, and proper names when translation would make them inaccurate.
+
+## Output contract
+
+Follow the selected branch above. Start with one complete sentence that states the single-agent or multi-agent conclusion and its main reason. Put the recommendation heading on the next line in the selected language. Do not add a separate “Recommendation” heading, split conclusion and reason into separate paragraphs, or place other material before the table. The table is the only recommended-role list. Do not repeat the roster in numbering, comma-separated text, or another table, and do not crowd model, deliverable, dependency, and permission details into the first table.
+
+Use these exact labels for English responses:
 
 ```markdown
-## 建议
+The current recommendation is [a single agent / multiple agents], because [why this is the smallest reliable structure].
 
-单 Agent／多 Agent
+## Recommended AI Team
 
-原因：［为什么这是当前最小且可靠的结构］
+| Role | Status | Primary responsibility |
+|---|---|---|
+| [Role; add “also project lead” when needed] | [Required / Required if a specific condition becomes true / Optional] | [One short sentence or a few keywords] |
 
-## 团队一览
+## Role Details
 
-| 角色 | 性质 | 定位与主要责任 | 负责的结果 | 模型建议 |
-|---|---|---|---|---|
-| ［角色；需要时标“兼主控”］ | ［必要／建议及条件］ | ［由需求决定］ | ［最终结果或真实协作产物］ | ［推荐配置＋简短理由；确有价值时补成本优化］ |
+### [Role name]
+
+- **Purpose:** [What problem this role solves here]
+- **Primary responsibility:** [The work it performs]
+- **Owned outcome and boundary:** [The result it uniquely owns and what it does not own]
+- **Activation condition:** [Required only for conditional roles; when it joins and whether it is created now]
+- **Timing:** [Only when a required role has an important predecessor]
+- **Model recommendation:** [Default model and reasoning effort, plus a reason tied to the role’s core work]
+- **Upgrade when:** [Optional; observable work that requires a stronger configuration]
+- **Token-saving option:** [Optional; a complete lower-cost configuration, or what a tool does, which steps use no model, and what the model still owns]
 ```
 
-只在确实有信息时追加以下内容：
+For a non-English response, translate the English contract naturally and consistently before writing the answer. Translate the recommendation heading, table headers, role titles, statuses, detail labels, relevant-Skill heading, next-step heading, and action phrases. Keep only technical identifiers and proper names untranslated. Do not retain English interface labels in an otherwise localized response.
 
-- 关键假设、依赖、权限或外部动作边界；
-- 不容易从表格看出的角色存在理由；
-- 相关 Skill 及其链接、状态和推荐理由；
-- 用户本轮明确要求实时检索时的来源核验与主要风险。
+Use the level-two heading exactly as localized above. The table may contain current required, conditional, and optional roles. Keep the user’s retained goal, key decisions, necessary authorizations, and final confirmation outside the table rather than listing the user as an execution member. Keep a conditional status short and bracket-free in the table, then explain it in the role details. Use a compact list with the same fields only when the interface genuinely cannot render a table.
 
-结尾用自然语言说明下一步：用户可以调整方案，确认后再创建或执行；如需实时查找更多 Skill，可以继续提出。不要强制逐字使用固定 CTA，也不要在多个章节重复“未安装／未创建／未执行”。
+For every current required role and every optional role retained in the table, include the four core fields: purpose, primary responsibility, owned outcome and boundary, and model recommendation. Add activation condition for every conditional role. Defer its model only under the narrow special-capability exception above. Add timing only when a required role has an important predecessor. Use `Upgrade when` and `Token-saving option` only when useful. Put a space after the closing Markdown bold marker so the raw `**` never leaks into the rendered answer. Add fields such as collaboration and dependencies, permission boundary, or why the role is needed only when they help; do not repeat the same idea to fill a template.
 
-## 确认后的动作
+Add only when there is real information:
 
-- 单 Agent 只有在用户确认继续后，才由当前对话开始业务执行。
-- 多 Agent 只有在用户确认当前方案后，才使用平台真实支持的独立任务能力创建必要成员。若当前界面没有该能力，说明限制并保留方案，不用临时 subagents 或普通聊天冒充长期成员。
-- 优先续用当前项目中职责匹配、可继续工作的长期任务；没有合适任务时才新建。
-- 每个成员收到自包含任务包，并包含 `TOOLKIT_MODE=member`；任务包写明角色、目标、输入、结果、权限、依赖、模型和禁止递归规划。
-- 找到或确认外部 Skill 不代表允许安装、运行脚本、登录、访问私有数据、写入、上传、发布或删除。每类动作按自身风险单独确认。
-- 主控可以提出授权请求，但不能代替用户授予系统权限。创建或安装失败时停止并如实报告，不假称完成。
+- important assumptions, dependencies, permissions, or external-action boundaries;
+- a role’s non-obvious reason for existing;
+- relevant Skills with links, status, and reasons, under a natural localization of the English heading `## Relevant Skills`;
+- source review and main risks when the user explicitly requested live discovery.
 
-## 发送前检查
+When there is one complete recommendation, end with a localized level-two next-step heading and two distinct actions.
 
-只检查以下结果，不要求固定篇幅或固定章节：
+For English:
 
-1. 单／多 Agent 结论能由用户事实解释；
-2. 每个角色都有明确责任和真实可检查的结果，没有重复 Owner 或为了格式虚构的交付；
-3. 用户没有仅因“会做”而被默认安排为执行者；必须由真人完成的动作也没有被交给 AI；
-4. 模型建议基于角色责任；没有机械地把强模型列为常用、轻模型列为省 Token；
-5. Skill 推荐不超过 3 个，公开候选有原始链接和推荐理由，状态没有写错；
-6. 全文没有把建议写成已安装、已创建或已执行。
+- Single agent: `- Reply **“Start execution”**: continue in this conversation without creating a new task.`
+- Multiple agents: `- Reply **“Create the AI team”**: create only the current Required members in the table; do not create conditional or Optional members.`
+- Both: `- Reply **“Find relevant Skills”**: check locally available items first, then search official or original-author public sources read-only; do not install or run a Skill.`
+- Both: `Login, private-data access, writes to external systems, uploads, publication, or deletion still require separate confirmation.`
+
+For any non-English response, translate the same four English action concepts into short, natural imperative phrases in the response language: start execution for a single agent, create the AI team for multiple agents, find relevant Skills for both, and the separate-confirmation notice for external actions. Preserve AI, Skill, and other technical identifiers when that is the normal localized usage. Do not include the English CTA beside its translation.
+
+The user may also request an adjustment directly. When clarification is still required and no unique recommendation exists, ask only the short structure-changing questions; do not show the next-step section. Do not repeat “not installed / not created / not executed” across several sections.
+
+Recognize later confirmation by intent; do not require the user to reproduce an exact CTA string.
+
+## Actions after confirmation
+
+- For a single-agent plan, begin business execution in the current conversation only after the user confirms continuation.
+- For a multi-agent plan, after the user confirms the plan, use the platform’s real persistent independent-task capability to create only the current `Required` members. Do not create `Required if…` roles until the condition is true and the updated plan is confirmed again. Do not create `Optional` roles unless the user explicitly selects them. If the interface has no independent-task capability, state the limitation and retain the plan; do not substitute temporary subagents or ordinary chats for persistent members.
+- Reuse a matching persistent task in the current project when it can continue the work; create a new one only when none fits.
+- Give each member a self-contained assignment that includes `TOOLKIT_MODE=member`, its role, goal, inputs, outcome, permissions, dependencies, model, and prohibition on recursive team planning.
+- Finding or approving an external Skill does not authorize installation, script execution, login, private-data access, writes, uploads, publication, or deletion. Confirm each action according to its own risk.
+- The project lead may decide when to request authorization but cannot grant system permissions on the user’s behalf. If creation or installation fails, stop and report the actual state; never claim completion.
+
+## Pre-send check
+
+Check outcomes only; do not enforce a fixed length or every possible section:
+
+1. All work packages needed to reach the final state are covered and each has a clear Owner; the user, model, tool, Skill, or project-lead label does not silently fill a responsibility gap.
+2. The single-agent or multi-agent conclusion follows from the user’s facts.
+3. Every role has a clear responsibility and a genuinely checkable outcome; every separate member passes the transfer test; no role exists merely because of a title, downstream consumption, or future possibility; there is no duplicate Owner or invented deliverable.
+4. The user is not assigned execution merely because they know how to do it; actions that require a real person are not assigned to AI. For an app-store submission, paid service, or platform release, the relevant user-held account, 2FA, payment, legal-acceptance, and final-submission actions are named explicitly rather than hidden behind a generic external-action notice; irrelevant items are not added.
+5. Each default model fits the role’s routine core work; an occasional high-risk segment does not raise the entire role; every model change names a full model and reasoning effort; Token-saving options appear only for mechanical repetitive steps and state what the tool does, which steps use no model, and what the model still owns.
+6. Skill recommendations are at most 3; public leads have an original link and accurate status.
+7. The response does not describe a recommendation as already installed, created, or executed.
+8. The localized Recommended AI Team table is the only roster; members are not repeated before or after it. Combining responsibilities does not rely on AI-invented scope assumptions, and the absence of user wording about combining does not become evidence for splitting.
+9. Status and timing are not confused. Conditional roles have an observable activation condition and are not created now; milestones are not written as existence conditions. A shared goal does not have dual project leads, and fully independent work does not receive an invented lead. Markdown emphasis renders correctly.
+10. A complete plan ends with the localized next-step section, the correct single-agent or multi-agent action, and the Skill-discovery action. Team creation covers only current Required members; discovery does not authorize installation or execution. Clarification-only answers have no next-step section.
+11. The complete clarification or recommendation uses the selected branch consistently; a progress message never determines the final-output branch and stays brief without implying execution.
+12. Every locally available Skill recommendation uses the platform’s exact full identifier, including its namespace when present.

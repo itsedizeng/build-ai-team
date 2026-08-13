@@ -1,57 +1,86 @@
-# 模型建议
+# Model Recommendations
 
-只在角色结构确定后读取本文件。模型用于匹配实际责任和返工风险，不能反向制造角色或改变团队边界。
+Read this file only after the role structure is settled. Match models to actual responsibility and rework risk; never let a model create roles or change team boundaries.
 
-## 1. 默认只给一个推荐配置
+## 1. Give one default configuration
 
-为每个当前角色给出：
+For each current role, give:
 
-- 当前可用的完整模型名与推理强度；
-- 一句与该角色责任、输入和验收风险直接相关的理由。
+- a currently available full model name and reasoning effort;
+- one reason tied directly to the role’s core responsibility, inputs, and validation risk.
 
-不要强制输出固定双档。只有存在安全、具体的优化方式时，才追加成本优化；核心判断、高风险审查、复杂研究或返工代价高的工作可以明确写“不建议降模型”。
+Use the configuration that fits the role’s recurring core work. Do not let one rare high-risk task raise the whole role to a stronger model or higher reasoning effort. Only when high-risk judgment dominates the role, or a lower configuration would make its core outcome unreliable, should the default itself be stronger.
 
-## 2. 判断顺序
+Do not force a fixed two-tier answer. Add `Upgrade when` or `Token-saving option` only when a safe, concrete option exists. It is valid to omit both for a role. Do not fill every role with the same downgrade merely to complete a template.
 
-依次判断：
+## 2. Evaluate work inside the role
 
-1. **责任风险与推理强度：**是否涉及复杂判断、长材料综合、跨来源冲突、高风险审查或难以发现的错误；
-2. **输入与验收：**输入是否完整、范围是否稳定、验收标准是否明确、结果是否容易复核；
-3. **当前可用模型：**只从运行环境能够确认的型号与推理档位中选择；
-4. **返工成本：**降配置造成的遗漏、返工和重复输入，是否可能超过预期节省。
+First separate the role’s work into:
 
-典型方向：
+1. **Routine core work:** the repeated work that determines day-to-day outcome quality;
+2. **Occasional high-risk work:** a specific decision, review, or recovery task whose error is costly;
+3. **Low-risk execution:** structured, mechanical, easily checked work with low rework cost.
 
-- 边界清楚、输入结构化、结果容易复核的整理与局部执行，可以使用平衡或轻量配置；
-- 需要多步推理、跨材料一致性或中等专业判断，使用平衡模型的 `medium` 或 `high`；
-- 核心研究、复杂架构、高风险审查、长材料综合或强不确定性，优先保持能力较强的模型，可先降低推理强度而不是直接降模型；
-- 工作内部确有多条独立分析线时，可以建议支持内部并行推理的配置，但说明额外 Token 与协调成本；内部临时分工不显示为用户团队成员。
+Then evaluate:
 
-期限紧、文件多、页面多、职位名称高级、用户要求“最好”或项目预算有限，都不能单独决定模型或 Token 策略。
+1. **Responsibility risk and reasoning:** Does it require complex judgment, long-context synthesis, conflict resolution, high-risk review, or errors that are difficult to detect?
+2. **Inputs and validation:** Are inputs complete, scope stable, acceptance criteria clear, and outputs easy to check?
+3. **Currently available models:** Select only model names and reasoning efforts the current environment confirms.
+4. **Rework cost:** Could omissions, repeated input, or correction cost more than the expected saving?
 
-## 3. 成本优化不等于换轻模型
+Typical directions:
 
-按风险从低到高考虑：
+- For bounded, structured, easily checked organization and local execution, use a balanced or lightweight configuration.
+- For multi-step reasoning, cross-material consistency, or moderate professional judgment, use a balanced model with `medium` or `high` reasoning effort.
+- For core research, complex architecture, high-risk review, long-context synthesis, or strong uncertainty, keep a capable model. Consider a lower reasoning effort before changing to a weaker model.
+- If a role contains several independent internal analysis lines, a configuration that supports internal parallel reasoning can be useful, but mention extra Token and coordination cost. Internal temporary work does not become a user-visible team member.
 
-1. 收窄输入范围，只加载当前阶段需要的材料；
-2. 把验收标准和输出结构说明清楚；
-3. 对低风险阶段降低同一模型的推理强度；
-4. 仅在结果容易核验、返工代价低时改用更轻模型。
+A tight deadline, many files, many pages, a senior-sounding title, the word “best,” or a limited project budget does not determine the model or Token strategy by itself.
 
-如果降低模型可能显著增加遗漏或返工，写明：`成本优化：不建议降模型；可先收窄上下文或分阶段处理。`
+## 3. Make every model change complete
 
-不要承诺固定节省比例，也不要把“用户预算有限”解释为“Token 预算不足”。
+Whenever recommending a different model or reasoning effort, give:
 
-## 4. 当前型号边界
+- the specific work it applies to;
+- the full target model name;
+- the target reasoning effort.
 
-- 不维护永久默认名单，不按职位固定模型；相同职位在不同工作包中可以使用不同配置。
-- 无法确认当前型号时不要编造，写“请以当前模型选择器为准”，并描述需要的能力档位。
-- 不把价格、上下文长度或速度写成事实，除非当前官方资料能够验证。
+Do not write only `medium`, `low`, `lower reasoning`, or `use a lightweight model`. A user must be able to apply the recommendation without reconstructing the configuration.
 
-## 5. 发送前检查
+Normally give even an inactive conditional role a full default configuration. Only when its future work depends on a special capability such as audio or video and the current environment cannot confirm a supported model may you defer the recommendation. State that when the condition becomes true, the plan must be updated, the model configuration confirmed, and the role confirmed again. Do not use a vague tier or model-selector placeholder.
 
-- 每个角色只有一条主推荐；成本优化按需出现；
-- 建议基于该角色责任，而不是整个项目的总复杂度或角色名称；
-- 没有机械形成“强模型负责全部常用、轻模型负责全部省 Token”的统一答案；
-- 降配置时已经考虑输入完整度、验收难度和返工成本；
-- 模型建议没有反向增加成员或改变专业责任。
+## 4. Token-saving options are not always model downgrades
+
+Only add `Token-saving option` when a clear, low-risk, easily checked optimization exists. Do not promise a fixed saving.
+
+Consider, in order:
+
+1. narrow the input to the current stage;
+2. make acceptance criteria and output structure explicit;
+3. reduce re-reading or process material in bounded batches;
+4. use deterministic tools for fixed-rule, mechanical, independently verifiable steps;
+5. lower the same model’s reasoning effort for low-risk work;
+6. use a lighter model only when the result is easy to check and rework is cheap.
+
+When suggesting a deterministic script or tool, state:
+
+- what the tool performs;
+- which steps require no model call;
+- which rule interpretation, ambiguity handling, exception judgment, or result explanation remains with the model.
+
+Do not present semantic classification, product trade-offs, design judgment, professional review, or independent validation as mechanical processing. Do not recommend a lower configuration when it is likely to increase omission or rework. Do not translate “the project budget is limited” into “the Token budget is limited.”
+
+## 5. Current model boundary
+
+- Do not maintain a permanent default list and do not assign models by job title. The same title may need different configurations for different work packages.
+- Do not invent a model name, capability, reasoning effort, price, context size, or speed. Use only facts the current environment or current official material confirms.
+- If a current required or optional role lacks a confirmable model configuration, the recommendation is incomplete; stop rather than replace it with a vague capability tier.
+
+## 6. Pre-send check
+
+- Every current role has one complete default configuration, except the narrow inactive special-capability case.
+- The default follows the role’s routine core work, not the project’s total complexity or the title.
+- Any upgrade or downgrade names specific work, a full model name, and a reasoning effort.
+- Token-saving options appear only when useful and do not mechanically repeat across roles.
+- Deterministic processing states the tool boundary, the no-model steps, and the model-owned judgment.
+- A model recommendation has not added a member or changed professional ownership.
