@@ -26,6 +26,8 @@ Your request → one Agent or the smallest reliable team
 
 ## Quick start
 
+Explicit invocation only: select Build AI Team or use `$build-ai-team`; ordinary requests and mentions do not trigger it.
+
 After installation, start a fresh Codex task and enter a real request:
 
 ```text
