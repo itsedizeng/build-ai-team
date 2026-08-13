@@ -4,11 +4,37 @@
 
 > Stable release: `v1.0.0`
 
-Build AI Team is an open-source, Codex-first Skill that recommends the smallest reliable AI setup for a request. It decides whether one Agent is enough or multiple persistent Agents are worthwhile, defines clear responsibilities and owned outcomes, recommends model configurations, identifies suitable local Skills, and can search public sources for external Skills when asked.
+**Choose one Agent or the smallest reliable persistent AI team—with clear ownership, role-specific model routing, and source-aware Skill discovery.**
 
-It plans first. It does **not** create a team, install a Skill, connect to an account, access private data, or write to an external system without the user’s confirmation for that action.
+Give Build AI Team a real request. It works backward from the final result, keeps one Agent when that is enough, and adds a persistent role only when ownership, separation, or collaboration value is concrete.
 
-## Status
+```text
+Your request → one Agent or the smallest reliable team
+→ role ownership and model configuration → your confirmation
+```
+
+## Highlights
+
+- **Right-sizes the team.** Starts with one Agent and adds a persistent role only when its ownership, separation, or collaboration value is concrete.
+- **Makes every role accountable.** Each current role gets one clear responsibility, owned outcome, dependencies, and boundaries.
+- **Routes models by responsibility.** Recommends a default model and reasoning effort, explicit upgrade conditions, and practical Token-saving options when safe.
+- **Finds relevant Skills without blurring status.** Distinguishes locally available Skills from public leads; on request, it searches public sources and checks fit, provenance, maintenance signals, and permission risks.
+- **Keeps the planning task useful.** After confirmation, the current planning conversation can remain the substantive project lead while only the other necessary persistent tasks are created. Persistent tasks are the live team state; no `AI_TEAM.md` roster is created.
+- **Separates every consequential action.** Planning, team creation, public Skill search, installation, login, private-data access, writes, uploads, publication, and deletion remain distinct steps.
+
+> Planning ≠ team creation ≠ Skill search ≠ installation ≠ external permission.
+
+## Quick start
+
+After installation, start a fresh Codex task and enter a real request:
+
+```text
+$build-ai-team I want to design, build, and launch a paid web app with accounts and subscriptions.
+```
+
+The first response is a plan. No team, Skill installation, account connection, private-data access, or external write happens without confirmation for that specific action.
+
+## Support and validation
 
 - English is the single runtime semantic source. Clarification questions and complete recommendations follow the user’s latest substantive request language; technical identifiers remain accurate.
 - The `v1.0.0` five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
@@ -19,18 +45,6 @@ It plans first. It does **not** create a team, install a Skill, connect to an ac
 - This project is not an official OpenAI, Codex, ChatGPT, or Anthropic project.
 - Compatibility, model availability, and recommendation quality may vary by host and version; no vendor endorsement or compatibility guarantee is implied.
 - This stable release continues the MIT license introduced by the public `v1.0.0-rc.9` commit.
-
-## What it does
-
-- Chooses a single-agent or multi-agent setup from the actual delivery, ownership, permission, validation, and capacity needs.
-- Gives each role a clear purpose, responsibility, owned outcome, boundary, dependency, and necessity status.
-- Separates the project lead from professional Owners so coordination does not absorb another role’s deliverable.
-- Recommends one default model and reasoning effort per role, with optional upgrade conditions and lower-cost model configurations only when useful.
-- Suggests up to three suitable locally available Skills with exact identifiers and accurate status. When the user explicitly asks, it separately searches public sources for external Skills and reviews fit, provenance, maintenance signals, and permission risks.
-- After confirmed multi-agent creation, reuses the planning conversation as the substantive project-lead role when applicable and creates only the other current required persistent tasks. Member titles contain the role only.
-- Uses the actual persistent tasks as the live team state and does not create or maintain a roster, plan, or team-state document.
-- Keeps planning, team creation, public Skill search, installation, login, private-data access, writes, upload, publication, and deletion as separate actions.
-- Uses English as the single runtime semantic source, responds in the user’s language, and keeps technical identifiers accurate.
 
 ## What it does not do automatically
 

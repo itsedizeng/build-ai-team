@@ -6,7 +6,7 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
-- No unreleased changes recorded yet.
+- Refocused the README opening on user outcomes: the smallest reliable persistent team, role-specific model routing, source-aware Skill discovery, and separated permission steps. Runtime behavior is unchanged.
 
 ## 1.0.0 - 2026-08-13
 
