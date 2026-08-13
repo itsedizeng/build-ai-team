@@ -14,7 +14,11 @@ The Skill does not guarantee the safety of third-party Skills or external servic
 
 ## Supported versions
 
-Until `v1.0.0` is published, security fixes target the current `main` branch. After the first stable release, this file will list supported release lines explicitly.
+| Version | Supported |
+|---|---|
+| `1.0.x` | Yes |
+| `1.0.0-rc.x` | No |
+| `1.0-beta.x` | No |
 
 ## Reporting a vulnerability
 

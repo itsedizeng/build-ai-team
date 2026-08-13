@@ -8,6 +8,30 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 - No unreleased changes recorded yet.
 
+## 1.0.0 - 2026-08-13
+
+### Added
+
+- Stable single-agent and multi-agent planning with explicit ownership, dependencies, collaboration, model recommendations, and permission boundaries.
+- Separate `Suitable Local Skills`, offline public leads, and user-requested external public Skill search with provenance, maintenance-signal, and permission-risk review.
+- A compact collaboration map for multi-agent recommendations.
+
+### Changed
+
+- Reuse the planning conversation as the substantive project-lead role when applicable, create only the other current required persistent tasks, and use role-only task titles.
+- Treat actual persistent tasks as the live team state. Team creation no longer creates or modifies `AI_TEAM.md`, a roster, a plan, or another project document.
+- Keep future add-member suggestions as confirmed deltas against the actual persistent tasks and latest confirmed plan; do not reconstruct a roster from project documents.
+- Keep Token-saving guidance limited to concrete lower-cost model and reasoning-effort configurations. Do not put scripts, automation, commands, or process advice in that field.
+- Keep external Skill search separate from the local list and preserve the plan’s primary next-step action after search.
+- Localize generic professional and capability terms while preserving exact technical identifiers.
+
+### Validation status
+
+- The five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
+- Minimal project-scoped Codex Desktop validation covered six core behavior gates with 0 minor / 0 major / 0 blocker.
+- After project-document team state was removed, a fresh differential validation of the final build passed five behavior gates with 0 minor / 0 major / 0 blocker and confirmed zero project-document writes.
+- These checks are limited real-host evidence, not a statistical guarantee or cross-host validation.
+
 ## 1.0.0-rc.9 - 2026-08-13
 
 ### Added

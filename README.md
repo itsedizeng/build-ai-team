@@ -2,31 +2,34 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-> Release candidate: `v1.0.0-rc.9`
+> Stable release: `v1.0.0`
 
-Build AI Team is an open-source, Codex-first Skill that recommends the smallest reliable AI setup for a request. It decides whether one Agent is enough or multiple persistent Agents are worthwhile, defines clear responsibilities and owned outcomes, recommends model configurations, and points to relevant Skills.
+Build AI Team is an open-source, Codex-first Skill that recommends the smallest reliable AI setup for a request. It decides whether one Agent is enough or multiple persistent Agents are worthwhile, defines clear responsibilities and owned outcomes, recommends model configurations, identifies suitable local Skills, and can search public sources for external Skills when asked.
 
 It plans first. It does **not** create a team, install a Skill, connect to an account, access private data, or write to an external system without the user’s confirmation for that action.
 
 ## Status
 
-- The English runtime is derived from the independently validated Chinese `v1.0-beta13` behavior baseline. Clarification questions and complete recommendations follow the user’s latest substantive request language; technical identifiers remain accurate.
-- The `v1.0.0-rc.9` five-file runtime and frozen 5-case / 7-run validation package each passed independent static review with 0 major / 0 minor / 0 blocker.
-- A separate project-scoped Codex Desktop check used six fresh tasks with the same candidate: five English requests and one Chinese request. All six progress messages and complete recommendations followed the request language. This is a limited visible real-host check, not a statistical guarantee or cross-host validation.
+- English is the single runtime semantic source. Clarification questions and complete recommendations follow the user’s latest substantive request language; technical identifiers remain accurate.
+- The `v1.0.0` five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
+- Minimal project-scoped Codex Desktop validation covered single-agent, multi-agent, maker-checker, conditional-role, external-search, and team-creation behavior. Six core behavior gates passed with 0 minor / 0 major / 0 blocker. After project-document team state was removed, a fresh five-gate differential validation of the final build also passed with 0 minor / 0 major / 0 blocker and confirmed zero project-document writes.
+- These checks are limited real-host evidence, not a statistical guarantee or cross-host validation.
 - Codex Desktop project-based usage is the primary target.
-- Entry instructions for ChatGPT Work and Claude are included, but those hosts have not been validated in practice for this release candidate.
+- Entry instructions for ChatGPT Work and Claude are included, but those hosts have not been validated in practice for this release.
 - This project is not an official OpenAI, Codex, ChatGPT, or Anthropic project.
 - Compatibility, model availability, and recommendation quality may vary by host and version; no vendor endorsement or compatibility guarantee is implied.
-- This repository version is the first public MIT-licensed release candidate. Its annotated tag and Pre-release are created only after the exact public `main` commit is read back and verified.
+- This stable release continues the MIT license introduced by the public `v1.0.0-rc.9` commit.
 
 ## What it does
 
 - Chooses a single-agent or multi-agent setup from the actual delivery, ownership, permission, validation, and capacity needs.
 - Gives each role a clear purpose, responsibility, owned outcome, boundary, dependency, and necessity status.
 - Separates the project lead from professional Owners so coordination does not absorb another role’s deliverable.
-- Recommends one default model and reasoning effort per role, with optional upgrade or Token-saving guidance only when useful.
-- Suggests up to three locally available or relevant public Skills with accurate source and installation status.
-- Keeps planning, team creation, Skill discovery, installation, login, private-data access, writes, upload, publication, and deletion as separate actions.
+- Recommends one default model and reasoning effort per role, with optional upgrade conditions and lower-cost model configurations only when useful.
+- Suggests up to three suitable locally available Skills with exact identifiers and accurate status. When the user explicitly asks, it separately searches public sources for external Skills and reviews fit, provenance, maintenance signals, and permission risks.
+- After confirmed multi-agent creation, reuses the planning conversation as the substantive project-lead role when applicable and creates only the other current required persistent tasks. Member titles contain the role only.
+- Uses the actual persistent tasks as the live team state and does not create or maintain a roster, plan, or team-state document.
+- Keeps planning, team creation, public Skill search, installation, login, private-data access, writes, upload, publication, and deletion as separate actions.
 - Uses English as the single runtime semantic source, responds in the user’s language, and keeps technical identifiers accurate.
 
 ## What it does not do automatically
@@ -102,9 +105,9 @@ $build-ai-team 我想做一个能上架 App Store 的记账 App，请给我团�
 - `project lead`: an existing substantive role that additionally coordinates plan, dependencies, and final handoff status; it does not gain ownership of other roles’ professional deliverables.
 - independent reviewer: stays separate from production and does not edit the work being reviewed.
 
-## Relevant Skill discovery
+## Local Skills and public search
 
-The first recommendation uses only Skills exposed by the current host and a small offline index. Live public discovery starts only when the user asks for it.
+The first recommendation separates suitable Skills exposed by the current host from unchecked public leads in a small offline index. Live public search starts only when the user asks for it, searches external sources rather than repeating the local list, and keeps the plan’s primary next step visible.
 
 A recommendation is not installation. Installation is not permission to run scripts, log in, read private data, write, upload, publish, or delete. Review third-party Skills and their licenses before use.
 
@@ -128,7 +131,7 @@ Build AI Team is a separate Skill product. It does not replace the earlier five-
 
 ## License and official source
 
-This public release candidate is provided under the [MIT License](LICENSE). The license change starts with the public `main` commit containing `v1.0.0-rc.9`; that version and later MIT-licensed releases may be used, copied, modified, merged, published, distributed, sublicensed, and sold subject to the license terms.
+This stable release is provided under the [MIT License](LICENSE). The license change began with the public `main` commit containing `v1.0.0-rc.9`; that version and later MIT-licensed releases may be used, copied, modified, merged, published, distributed, sublicensed, and sold subject to the license terms.
 
 The earlier `v1.0-beta7` public source snapshot remains governed by the custom non-open-source license included in [that exact commit](https://github.com/itsedizeng/build-ai-team/blob/b2e81d3859a169056629e78dff322cfcfbefcf31/LICENSE.md). The MIT change is not retroactive.
 

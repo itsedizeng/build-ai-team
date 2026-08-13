@@ -1,11 +1,11 @@
 ---
 name: build-ai-team
-description: "Plan the smallest reliable AI team for a new request: decide single versus multiple agents, define roles, owned outcomes, boundaries, dependencies, and model recommendations, then suggest up to 3 locally available or relevant Skills with source links and reasons. Write clarification questions and the complete recommendation in the language of the user's latest substantive request while preserving accurate technical identifiers. Use only when explicitly selected or invoked as $build-ai-team in Codex or ChatGPT Work, as /build-ai-team in Claude Code, or when the user explicitly asks an uploaded Build AI Team Skill to plan a team. Do not invoke for ordinary business requests, references or discussion, explicit negation, or TOOLKIT_MODE=member tasks. Only perform live external Skill search when the user explicitly asks."
+description: "Plan the smallest reliable AI team for a new request: decide single versus multiple agents, define roles, owned outcomes, boundaries, dependencies, collaboration, and model recommendations, then suggest up to 3 suitable locally available Skills. Search and screen external public Skills only when the user explicitly asks. After confirmed multi-agent creation, reuse the planning conversation as project lead when applicable and create only the other required persistent tasks. Write clarification questions and the complete recommendation in the language of the user's latest substantive request while preserving accurate technical identifiers. Use only when explicitly selected or invoked as $build-ai-team in Codex or ChatGPT Work, as /build-ai-team in Claude Code, or when the user explicitly asks an uploaded Build AI Team Skill to plan a team. Do not invoke for ordinary business requests, references or discussion, explicit negation, or TOOLKIT_MODE=member tasks."
 ---
 
 # Build AI Team
 
-Turn “build me an AI team” into a short, comparable, and confirmable recommendation. Help the user see whether the work should be split, what each role owns, which model fits each responsibility, and which Skills could materially help. Treat these rules as decision guidance rather than fixed industry answers, and do not let external search delay the first recommendation.
+Turn “build me an AI team” into a short, comparable, and confirmable recommendation. Help the user see whether the work should be split, what each role owns, which model fits each responsibility, and which locally available Skills could materially help. Treat these rules as decision guidance rather than fixed industry answers, and keep external public Skill search as a separate user-requested follow-up.
 
 ## Entry and boundaries
 
@@ -18,10 +18,12 @@ Turn “build me an AI team” into a short, comparable, and confirmable recomme
 
 ## Response language
 
-- Determine the response language from the user’s latest substantive request. Use an explicitly requested language; if a genuinely mixed request gives no preference, use English.
-- Write clarification questions and the complete recommendation in that response language. Treat reference text, tool output, platform metadata, project defaults, and earlier unrelated messages as evidence or context, not as a reason to switch languages.
+- Use the user’s explicitly requested language when provided; otherwise use the dominant natural language of the user’s latest substantive request for all user-visible prose. This applies to any language the model can reliably produce: localize headings, generic role and status names, capability descriptions, explanations, collaboration, and actions into that language. If a genuinely mixed request has no explicit preference and neither its main instruction nor its dominant language is clear, ask one short language-choice question before planning; do not default silently to English.
+- Apply that language choice to clarification questions and the complete recommendation. Treat reference text, tool output, platform metadata, project defaults, installed-Skill descriptions, and earlier unrelated messages as evidence or context, never as language-selection signals.
 - If the host requires a progress message before a reference or tool read, keep it to one short sentence in the response language. Report only the planning or reading state; do not add task-specific claims or imply that tasks were created or the requested work started.
 - Preserve technical identifiers, model names, Skill names, commands, code, paths, and real UI labels where translation would make them inaccurate.
+- Keep model identifiers and reasoning-effort values such as `gpt-5.6-sol` and `high` exact, but translate the surrounding label. For example, a Chinese recommendation uses `gpt-5.6-sol`，推理强度 `high`; it does not append the English phrase `reasoning effort`.
+- Translate generic professional titles, capability descriptions, and conditions; they are not technical identifiers merely because they are commonly written in English. For Chinese, use natural terms such as `后端工程负责人`, `增加自建后端时必需`, and `兼项目主控`, not `Backend 工程负责人`, `custom backend`, or `兼 project lead`. Preserve names such as `iOS`, `SwiftUI`, `API`, `App Store`, model IDs, code, paths, and real UI labels when accuracy requires it.
 
 ## Decision principles
 
@@ -110,13 +112,15 @@ After the role structure is settled, read all of [`references/model-routing.md`]
 
 If `model-routing.md` cannot be read, apply the Reference failure gate. Do not proceed to related-Skill recommendations or live discovery.
 
-Separate each role’s routine core work, occasional high-risk work, and low-risk execution. Do not raise the entire role to a stronger model or higher reasoning effort because of one small high-risk segment. Add an observable `Upgrade when` or `Token-saving option` only when a specific, low-risk, easily checked optimization exists. Do not force either field for every role and do not promise a fixed saving.
+Separate each role’s routine core work, occasional high-risk work, and low-risk execution. Do not raise the entire role to a stronger model or higher reasoning effort because of one small high-risk segment. Add an observable `Upgrade when` or `Token-saving option` only when a specific model-configuration change is safe and useful. Do not force either field for every role and do not promise a fixed saving.
 
-Make every model change directly actionable. Whenever recommending a different model or reasoning effort, write the full target configuration: model name and reasoning effort. Do not say only “use medium,” “lower reasoning,” or “switch to a lightweight model.” If a script, tool, smaller input, or reduced re-reading is a better way to save Tokens, use it only for fixed-rule, mechanical, independently verifiable steps. State what the tool does, which steps use no model call, and which rule interpretation, exception judgment, or result explanation still belongs to the model. Do not disguise semantic classification, product trade-offs, design judgment, professional review, or independent validation as mechanical work.
+Evaluate these fields across the complete recommendation, not only role by role. If any default configuration has an observable higher-risk branch that genuinely needs a stronger configuration, show at least one useful `Upgrade when` on the closest role. If any role contains low-risk, repetitive, easily verified work that can safely use a lower-cost model configuration, show at least one useful `Token-saving option` on the closest role. In a maker-checker workflow, assess the maker and the independent checker separately: when each has different eligible low-risk work, give each a distinct useful option; the maker’s option does not cover the checker. This is not a quota—omit the checker’s field when its work is mainly non-repetitive professional judgment or cannot safely use a lower configuration. It is valid to omit a field only when no current role has an eligible case; never copy the same upgrade or saving across every role. If every current role receives the same strongest model and reasoning effort, re-check each role against its routine core work: a shared launch deadline or the product’s overall risk is not enough to make every default identical.
+
+Make every model change directly actionable. Whenever recommending a different model or reasoning effort, write the specific low-risk work plus the full target configuration: model name and reasoning effort. Do not say only “use medium,” “lower reasoning,” or “switch to a lightweight model.” Keep core judgment, ambiguous work, error diagnosis, professional review, and final decisions on the role’s default configuration. In `Token-saving option`, recommend only model or reasoning-effort changes; do not add scripts, tools, automation, commands, smaller-input tactics, or process advice. Do not imply automatic routing.
 
 Models must not determine the number of roles. Give every current required role and every optional role shown in the table a complete, confirmable default configuration; do not substitute UI placeholders or vague capability tiers. Normally give conditional roles a complete configuration too. Only when an inactive conditional role depends on a special capability, such as audio or video, whose supported model cannot currently be confirmed may you defer the model recommendation and say that the plan and model configuration must be updated and confirmed when the condition becomes true. Do not use this exception to bypass the Reference failure gate, add a model automatically, or create the member automatically.
 
-### 5. Recommend relevant Skills
+### 5. Recommend suitable local Skills
 
 After roles and responsibilities are clear, read all of [`references/curated-skills.md`](references/curated-skills.md). Recommend at most 3 Skills; this is a ceiling, not a quota. Omit the section when none would materially help.
 
@@ -134,11 +138,15 @@ Keep the user-facing status simple and localize it to the response language:
 - Locally available: `Skill name (available locally) — reason.`
 - Public lead: `[Skill name](original source) (public recommendation; not checked live; installation status unknown) — reason.`
 
+Put locally available recommendations under `## Suitable Local Skills`; in Chinese, use `## 本地适用 Skill`. If an offline public lead is important enough to show before live search, put it separately under `## Public Skill Leads`; in Chinese, use `## 公开 Skill 线索`. Never mix an unchecked public lead into the local section. Omit either section when it has no useful item.
+
 Do not expose internal categories such as “curated candidate,” “direct match,” or “related addition.” Do not describe a public lead as installed, current, or security-certified.
 
-### 6. Discover external Skills only on request
+### 6. Search external Skills only on request
 
-Only when the user explicitly asks in the current turn to find, screen, or verify external Skills, read all of [`references/skill-discovery.md`](references/skill-discovery.md) and begin live discovery. Otherwise, do not browse; keep the first answer fast by using only platform-visible Skills and the offline curated index.
+Only when the user explicitly asks in the current turn to search, screen, or verify external Skills, read all of [`references/skill-discovery.md`](references/skill-discovery.md) and begin live discovery. Treat `Search for Skills`—localized as `搜索 Skill` in Chinese—as that explicit request. Otherwise, do not browse; keep the first answer fast by using only platform-visible Skills and the offline curated index.
+
+External search is a follow-up to the existing plan, not a second local recommendation pass. Do not re-check or repeat the locally available Skills already shown. Search public web sources for external candidates, exclude local duplicates, and screen usefulness, provenance, maintenance, adoption or review signals when available, and permission risks. Popularity is evidence to inspect, not proof that a Skill is good or safe.
 
 If `skill-discovery.md` cannot be read, apply the Reference failure gate. Do not continue the search or claim that external verification is complete.
 
@@ -147,6 +155,8 @@ After live discovery, localize this status pattern to the response language:
 `[Skill name](original source) (public-source read-only review completed; not installed or installation status unknown) — reason; main limitation or risk.`
 
 Searching, reviewing, recommending, installing, and running are separate actions. A recommendation is not installation. Confirmation to install is not authorization to log in, read private data, run third-party scripts, write, upload, publish, or delete.
+
+After live discovery, preserve the current plan’s primary action. If the existing recommendation is multi-agent, the first next-step action remains `Create the AI team`; if it is single-agent, it remains `Start execution`. Put any candidate-specific clarification or installation option after that primary action. Do not make Skill installation the only path forward.
 
 ### 7. Choose the final-output branch
 
@@ -183,10 +193,10 @@ The current recommendation is [a single agent / multiple agents], because [why t
 - **Timing:** [Only when a required role has an important predecessor]
 - **Model recommendation:** [Default model and reasoning effort, plus a reason tied to the role’s core work]
 - **Upgrade when:** [Optional; observable work that requires a stronger configuration]
-- **Token-saving option:** [Optional; a complete lower-cost configuration, or what a tool does, which steps use no model, and what the model still owns]
+- **Token-saving option:** [Optional; specific low-risk work plus a complete lower-cost model and reasoning-effort configuration, followed by the core work that stays on the default configuration]
 ```
 
-For a non-English response, translate the English contract naturally and consistently before writing the answer. Translate the recommendation heading, table headers, role titles, statuses, detail labels, relevant-Skill heading, next-step heading, and action phrases. Keep only technical identifiers and proper names untranslated. Do not retain English interface labels in an otherwise localized response.
+For a non-English response, translate the English contract naturally and consistently before writing the answer. Translate the recommendation heading, table headers, generic role titles, statuses, capability conditions, detail labels, local-Skill and public-lead headings, collaboration heading, next-step heading, and action phrases. Keep only true technical identifiers, enum values, real UI labels, and proper names untranslated. Translate the label `reasoning effort`; for example, write `推理强度 high` in Chinese rather than `high reasoning effort`. In Chinese, use the exact labels `升级条件` and `节省 Token 建议` when those fields appear, and use `兼项目主控` for the project-lead suffix. Do not retain generic English professional or capability phrases in an otherwise localized response.
 
 Use the level-two heading exactly as localized above. The table may contain current required, conditional, and optional roles. Keep the user’s retained goal, key decisions, necessary authorizations, and final confirmation outside the table rather than listing the user as an execution member. Keep a conditional status short and bracket-free in the table, then explain it in the role details. Use a compact list with the same fields only when the interface genuinely cannot render a table.
 
@@ -196,19 +206,23 @@ Add only when there is real information:
 
 - important assumptions, dependencies, permissions, or external-action boundaries;
 - a role’s non-obvious reason for existing;
-- relevant Skills with links, status, and reasons, under a natural localization of the English heading `## Relevant Skills`;
+- suitable locally available Skills with status and reasons under `## Suitable Local Skills`, and any unchecked public leads separately under `## Public Skill Leads`;
 - source review and main risks when the user explicitly requested live discovery.
+
+For every multi-agent recommendation, add a compact localized `## How the Team Collaborates` section; in Chinese, use exactly `## 协作方式`. Use 2–4 bullets to state which substantive role also serves as project lead, what the lead coordinates and does not own, the main sequence or parallel relationship, and where review findings or blocked work return. For fully independent work lines, state that project lead is not applicable and explain the separate handoffs. This section is a collaboration map, not a second roster: do not repeat every responsibility or model configuration.
 
 When there is one complete recommendation, end with a localized level-two next-step heading and two distinct actions.
 
 For English:
 
 - Single agent: `- Reply **“Start execution”**: continue in this conversation without creating a new task.`
-- Multiple agents: `- Reply **“Create the AI team”**: create only the current Required members in the table; do not create conditional or Optional members.`
-- Both: `- Reply **“Find relevant Skills”**: check locally available items first, then search official or original-author public sources read-only; do not install or run a Skill.`
+- Multiple agents: `- Reply **“Create the AI team”**: when a project lead applies, reuse this planning conversation as that substantive role; create tasks only for the other current Required members; do not create conditional or Optional members or write project documents.`
+- Both: `- Reply **“Search for Skills”**: search public web sources read-only for useful external Skills with clear provenance, credible maintenance or usage signals, and acceptable permission boundaries; do not repeat local recommendations, install, or run a Skill.`
 - Both: `Login, private-data access, writes to external systems, uploads, publication, or deletion still require separate confirmation.`
 
-For any non-English response, translate the same four English action concepts into short, natural imperative phrases in the response language: start execution for a single agent, create the AI team for multiple agents, find relevant Skills for both, and the separate-confirmation notice for external actions. Preserve AI, Skill, and other technical identifiers when that is the normal localized usage. Do not include the English CTA beside its translation.
+For any non-English response, translate the same four English action concepts into short, natural imperative phrases in the response language: start execution for a single agent, create the AI team for multiple agents, search for Skills for both, and the separate-confirmation notice for external actions. The Chinese search action is exactly `搜索 Skill`. For a Chinese multi-agent plan, the creation action must say that the current conversation becomes the substantive role serving as project lead when applicable and only the other current required tasks are created; it must not imply that project documents will be generated. Preserve AI, Skill, and other technical identifiers when that is the normal localized usage. Do not include the English CTA beside its translation.
+
+When answering a live Skill-search follow-up, end with the same primary plan action before search-specific actions. For example, a multi-agent plan still offers `Create the AI team` first; candidate installation or a needed compatibility answer follows separately.
 
 The user may also request an adjustment directly. When clarification is still required and no unique recommendation exists, ask only the short structure-changing questions; do not show the next-step section. Do not repeat “not installed / not created / not executed” across several sections.
 
@@ -217,11 +231,21 @@ Recognize later confirmation by intent; do not require the user to reproduce an 
 ## Actions after confirmation
 
 - For a single-agent plan, begin business execution in the current conversation only after the user confirms continuation.
-- For a multi-agent plan, after the user confirms the plan, use the platform’s real persistent independent-task capability to create only the current `Required` members. Do not create `Required if…` roles until the condition is true and the updated plan is confirmed again. Do not create `Optional` roles unless the user explicitly selects them. If the interface has no independent-task capability, state the limitation and retain the plan; do not substitute temporary subagents or ordinary chats for persistent members.
+- For a multi-agent plan with one shared goal and a designated project lead, reuse the current planning conversation as that substantive role serving as project lead. Rename the current conversation to the exact role title, then create new persistent tasks only for the other current `Required` members. Do not create a duplicate task for the role already assumed by the current conversation. If the plan has fully independent work lines and no project lead is applicable, do not invent one; create the independently required tasks and retain the current conversation only as the user’s planning entry point.
+- Name every member task with the role title only, such as `UX/UI Design Lead` or its natural localization. Do not prefix or suffix the project, product, client, or workstream name, and do not add separators such as `Project | Role`.
+- Do not create `Required if…` roles until the condition is true and the updated plan is confirmed again. Do not create `Optional` roles unless the user explicitly selects them. If the interface has no independent-task capability, state the limitation and retain the plan; do not substitute temporary subagents or ordinary chats for persistent members.
 - Reuse a matching persistent task in the current project when it can continue the work; create a new one only when none fits.
-- Give each member a self-contained assignment that includes `TOOLKIT_MODE=member`, its role, goal, inputs, outcome, permissions, dependencies, model, and prohibition on recursive team planning.
-- Finding or approving an external Skill does not authorize installation, script execution, login, private-data access, writes, uploads, publication, or deletion. Confirm each action according to its own risk.
+- Give each member a self-contained assignment in the user’s response language that includes `TOOLKIT_MODE=member`, its role, goal, inputs, outcome, permissions, immediate dependencies, model, and prohibition on recursive team planning. Do not paste the entire roster or collaboration map into every assignment. Preserve exact technical identifiers and enum values, but localize descriptive labels such as `reasoning effort`.
+- Searching for or approving an external Skill does not authorize installation, script execution, login, private-data access, writes, uploads, publication, or deletion. Confirm each action according to its own risk.
 - The project lead may decide when to request authorization but cannot grant system permissions on the user’s behalf. If creation or installation fails, stop and report the actual state; never claim completion.
+
+### Current team state and later changes
+
+Team creation must not create or modify `AI_TEAM.md`, a roster, a plan, or any other project document. The platform's actual persistent tasks are the live team state. Each member receives a self-contained assignment, while the project lead coordinates the confirmed goal and handoffs in its own task. Existing `AGENTS.md`, project files, and current user instructions remain authoritative for their own purposes, but do not become a separate team-state system merely because this Skill was used.
+
+A future add-member suggestion must inspect the actual persistent tasks available in the current project and compare them with the latest confirmed plan in the conversation. Propose only a delta: add, merge, replace, or keep, with the changed Owner, handoff, permissions, model, and coordination cost. If the current task state is unavailable or ambiguous, ask the user to confirm the existing members instead of inventing or reconstructing a roster from project documents. A suggestion does not create, rename, archive, or replace a task until the user confirms that exact change.
+
+If any task operation fails, stop, report the exact partial state, and do not claim that team creation completed. Confirmation to create the team authorizes only the disclosed current-member task operations; it does not authorize project-document writes or other external actions.
 
 ## Pre-send check
 
@@ -231,11 +255,14 @@ Check outcomes only; do not enforce a fixed length or every possible section:
 2. The single-agent or multi-agent conclusion follows from the user’s facts.
 3. Every role has a clear responsibility and a genuinely checkable outcome; every separate member passes the transfer test; no role exists merely because of a title, downstream consumption, or future possibility; there is no duplicate Owner or invented deliverable.
 4. The user is not assigned execution merely because they know how to do it; actions that require a real person are not assigned to AI. For an app-store submission, paid service, or platform release, the relevant user-held account, 2FA, payment, legal-acceptance, and final-submission actions are named explicitly rather than hidden behind a generic external-action notice; irrelevant items are not added.
-5. Each default model fits the role’s routine core work; an occasional high-risk segment does not raise the entire role; every model change names a full model and reasoning effort; Token-saving options appear only for mechanical repetitive steps and state what the tool does, which steps use no model, and what the model still owns.
-6. Skill recommendations are at most 3; public leads have an original link and accurate status.
+5. Each default model fits the role’s routine core work; an occasional high-risk segment does not raise the entire role; an all-identical strongest configuration has been re-checked role by role; every model change names a full model and reasoning effort; a localized response translates the reasoning-effort label while preserving its exact value. When a current role has an eligible higher-risk branch, at least one useful Upgrade condition appears across the team; separately, when a current role has low-risk, repetitive, easily verified work that can safely use a lower-cost configuration, at least one useful Token-saving option appears. Either field may be omitted when its own factual condition is absent; neither is mechanically repeated. A Token-saving option contains only a concrete lower-cost model configuration and its applicable work; it does not introduce scripts, tools, automation, commands, or process advice.
+6. Skill recommendations are at most 3; locally available items appear only under the suitable-local heading, and public leads have an original link, separate heading, and accurate status.
 7. The response does not describe a recommendation as already installed, created, or executed.
-8. The localized Recommended AI Team table is the only roster; members are not repeated before or after it. Combining responsibilities does not rely on AI-invented scope assumptions, and the absence of user wording about combining does not become evidence for splitting.
+8. The localized Recommended AI Team table is the only roster; members are not repeated before or after it. A multi-agent recommendation includes one compact collaboration map without becoming another roster. Combining responsibilities does not rely on AI-invented scope assumptions, and the absence of user wording about combining does not become evidence for splitting.
 9. Status and timing are not confused. Conditional roles have an observable activation condition and are not created now; milestones are not written as existence conditions. A shared goal does not have dual project leads, and fully independent work does not receive an invented lead. Markdown emphasis renders correctly.
-10. A complete plan ends with the localized next-step section, the correct single-agent or multi-agent action, and the Skill-discovery action. Team creation covers only current Required members; discovery does not authorize installation or execution. Clarification-only answers have no next-step section.
+10. A complete plan ends with the localized next-step section, the correct single-agent or multi-agent action, and the `Search for Skills` action. Team creation covers only current Required members; search does not re-list local recommendations or authorize installation or execution. A live-search follow-up preserves the primary plan action before candidate-specific actions. Clarification-only answers have no next-step section.
 11. The complete clarification or recommendation uses the selected branch consistently; a progress message never determines the final-output branch and stays brief without implying execution.
 12. Every locally available Skill recommendation uses the platform’s exact full identifier, including its namespace when present.
+13. After multi-agent confirmation, the current planning conversation becomes the designated substantive project-lead role when one exists; no duplicate lead task is created, and every created task title is only the role name without a project prefix.
+14. Team creation writes no project document. The live team state comes from actual persistent tasks; a future add-member suggestion proposes only a confirmed delta and does not infer authority from a project file.
+15. A localized response translates generic professional and capability terms such as backend, custom backend, frontend, and project lead while preserving only real identifiers and names that would become inaccurate if translated.
