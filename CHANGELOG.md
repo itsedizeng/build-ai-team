@@ -6,8 +6,22 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+## 1.0.1 - 2026-08-15
+
+### Changed
+
 - Refocused the README opening on user outcomes: the smallest reliable persistent team, role-specific model routing, source-aware Skill discovery, explicit invocation, and separated permission steps. Runtime behavior is unchanged.
 - Clarified that the Skill is optimized for diverse project scenarios across software, product, design, research, data, content, migrations, and releases. Runtime behavior is unchanged.
+- Treat an initial recommendation as a standalone request unless the user explicitly continues or reuses the same confirmed project.
+- Prevent shared directories, similar titles, previous tasks, memory, or prior team plans from silently changing the current scope, team, ownership, user execution responsibilities, permissions, or dependencies.
+- Keep optional capabilities found only in unverified history as unconfirmed branches rather than current responsibilities, dependencies, or scope assumptions.
+- Reuse a persistent task only after its existing assignment is verified to match the same confirmed project goal and scope.
+
+### Validation status
+
+- The five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
+- Targeted differential checks covered explicit new projects, an ordinary first request, a clean project, and explicit continuation. Four unaffected cases passed on the preceding candidate; after the only failing path was narrowed, the final candidate passed an independent fresh protection check for that path.
+- This is combined differential evidence, not a claim that the final candidate reran the complete test suite.
 
 ## 1.0.0 - 2026-08-13
 

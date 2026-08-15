@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-> Stable release: `v1.0.0`
+> Stable release: `v1.0.1`
 
 **Choose one Agent or the smallest reliable persistent AI team—with clear ownership, role-specific model routing, and source-aware Skill discovery.**
 
@@ -22,6 +22,7 @@ Your request → one Agent or the smallest reliable team
 - **Routes models by responsibility.** Recommends a default model and reasoning effort, explicit upgrade conditions, and practical Token-saving options when safe.
 - **Finds relevant Skills without blurring status.** Distinguishes locally available Skills from public leads; on request, it searches public sources and checks fit, provenance, maintenance signals, and permission risks.
 - **Keeps the planning task useful.** After confirmation, the current planning conversation can remain the substantive project lead while only the other necessary persistent tasks are created. Persistent tasks are the live team state; no `AI_TEAM.md` roster is created.
+- **Keeps new projects independent.** A shared folder, similar title, previous task, memory, or prior team plan does not make a request the same project. Existing project scope and tasks are reused only when the user clearly continues the same work.
 - **Separates every consequential action.** Planning, team creation, public Skill search, installation, login, private-data access, writes, uploads, publication, and deletion remain distinct steps.
 
 > Planning ≠ team creation ≠ Skill search ≠ installation ≠ external permission.
@@ -41,8 +42,9 @@ The first response is a plan. No team, Skill installation, account connection, p
 ## Support and validation
 
 - English is the single runtime semantic source. Clarification questions and complete recommendations follow the user’s latest substantive request language; technical identifiers remain accurate.
-- The `v1.0.0` five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
+- The `v1.0.1` five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
 - Minimal project-scoped Codex Desktop validation covered single-agent, multi-agent, maker-checker, conditional-role, external-search, and team-creation behavior. Six core behavior gates passed with 0 minor / 0 major / 0 blocker. After project-document team state was removed, a fresh five-gate differential validation of the final build also passed with 0 minor / 0 major / 0 blocker and confirmed zero project-document writes.
+- Targeted `v1.0.1` differential checks covered explicit new projects, ordinary first requests, a clean project, and explicit continuation. Four unaffected cases passed on the preceding candidate; after the only failing path was narrowed, the final candidate passed an independent fresh protection check for that path. This is combined differential evidence, not a claim that the final candidate reran the full suite.
 - These checks are limited real-host evidence, not a statistical guarantee or cross-host validation.
 - Codex Desktop project-based usage is the primary target.
 - Entry instructions for ChatGPT Work and Claude are included, but those hosts have not been validated in practice for this release.
