@@ -1,12 +1,12 @@
 # External Skill Discovery and Screening
 
-Read this file only after team responsibilities are settled and the user explicitly asks in the current turn to search, screen, or verify external Skills. Perform public discovery, read-only review, and recommendation; never install or execute automatically. This is an external-search follow-up, not another pass over locally available Skills.
+Read this file only after the concrete project, role, or work package is understood and the user explicitly asks in the current turn to search, screen, or verify external Skills. Perform public discovery, read-only review, and recommendation; never install or execute automatically. This may follow a team plan or answer a standalone project-specific Skill request; it is not another pass over locally available Skills.
 
 ## 1. Search scope
 
-Find external Skills that materially improve a current responsibility, outcome, or immediate next step. Do not add roles, change ownership, or expand the user’s goal merely to fit a Skill. Do not re-check or repeat the local recommendations already shown in the team plan.
+Find external Skills that materially improve a current responsibility, outcome, or immediate next step. Do not add roles, change ownership, or expand the user’s goal merely to fit a Skill. Do not re-check or repeat local recommendations already shown in the conversation.
 
-Use `curated-skills.md` as a source of leads, never as a live result. Re-check the current version, license, maintenance state, full file tree, and permission risks each time.
+When useful, consult `curated-skills.md` as an optional source of leads, never as a required dependency or live result. Re-check the current version, license, maintenance state, full file tree, and permission risks each time. If the curated index is missing or has no relevant lead, continue the public search without it.
 
 Public, read-only, no-login queries are acceptable only within an explicit narrow scope. Use de-identified capability, file type, platform, and task category terms. Never send customer names, internal project names, real business data, code, private paths, accounts, or credentials.
 
@@ -56,7 +56,9 @@ Keep each item short and localize it to the user’s response language. Use this
 
 For a non-English response, translate this status pattern naturally into the locked response language while preserving the exact Skill identifier and source URL. Do not include the English pattern beside its translation.
 
-Add exact version, license, platform, dependency, script, network, login, credential, and read/write details only when the user asks for them. Do not force a full audit table into the first recommendation.
+For every recommended Skill, always surface a compact maintenance status and its read, write, and external-action boundary. If current evidence does not establish either item, label it `unknown`; do not infer safety.
+
+The compact maintenance and read/write/external-action status is always shown. Fuller version, license, platform, dependency, script, network, login, and credential details may remain concise unless material or requested. Do not force a full audit table into the first recommendation.
 
 When no candidate passes, localize this message:
 
@@ -64,12 +66,12 @@ When no candidate passes, localize this message:
 
 ## 6. Keep search, installation, and execution separate
 
-After the search results, retain the primary action from the existing team recommendation:
+When the search follows an existing full team recommendation, retain that plan's primary action:
 
 - multi-agent plan: offer `Create the AI team` first;
 - single-agent plan: offer `Start execution` first.
 
-Then offer only the candidate-specific clarification or installation actions that are actually useful. Do not make installation the sole next step and do not repeat the local Skill list.
+For a standalone Skill request, do not invent a team action. Then offer only the candidate-specific clarification or installation actions that are actually useful. Do not make installation the sole next step and do not repeat the local Skill list.
 
 - Recommendation is not installation.
 - Only after the user names a candidate and confirms installation may you use the platform’s actual official installation capability. If no installation capability exists, provide the accurate original source and manual steps only.

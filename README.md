@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-> Stable release: `v1.0.1`
+> Version: `v1.1.0`
 
 **Choose one Agent or the smallest reliable persistent AI team—with clear ownership, role-specific model routing, and source-aware Skill discovery.**
 
@@ -18,6 +18,7 @@ Your request → one Agent or the smallest reliable team
 ## Highlights
 
 - **Right-sizes the team.** Starts with one Agent and adds a persistent role only when its ownership, separation, or collaboration value is concrete.
+- **Keeps narrow questions narrow.** Existing-team requests return only an `add`, `merge`, `replace`, or `keep` delta; confirmed replacements create and verify the new task, update affected responsibilities, re-check states, and archive the old task last. Model and Skill questions answer only the concrete configuration requested.
 - **Makes every role accountable.** Each current role gets one clear responsibility, owned outcome, dependencies, and boundaries.
 - **Routes models by responsibility.** Recommends a default model and reasoning effort, explicit upgrade conditions, and practical Token-saving options when safe.
 - **Finds relevant Skills without blurring status.** Distinguishes locally available Skills from public leads; on request, it searches public sources and checks fit, provenance, maintenance signals, and permission risks.
@@ -29,12 +30,14 @@ Your request → one Agent or the smallest reliable team
 
 ## Quick start
 
-Explicit invocation only: select Build AI Team or use `$build-ai-team`; ordinary requests and mentions do not trigger it.
+For a concrete project, role, or work package, Codex may select Build AI Team automatically when you ask for a new team setup, a change to an existing Agent team, a model configuration, or project-specific Skill advice. It selects the narrowest matching mode; you do not need to add an activation phrase.
+
+Simple bounded tasks, ordinary discussion or mention, explicit negation, and `TOOLKIT_MODE=member` work stay outside the planning workflow. Automatic selection still depends on the host’s Skill matching, so `$build-ai-team` remains the reliable explicit fallback.
 
 After installation, start a fresh Codex task and enter a real request:
 
 ```text
-$build-ai-team I want to design, build, and launch a paid web app with accounts and subscriptions.
+I want to design, build, and launch a paid web app with accounts and subscriptions. Decide whether one Agent or a team is appropriate and give me the complete working setup.
 ```
 
 The first response is a plan. No team, Skill installation, account connection, private-data access, or external write happens without confirmation for that specific action.
@@ -42,19 +45,21 @@ The first response is a plan. No team, Skill installation, account connection, p
 ## Support and validation
 
 - English is the single runtime semantic source. Clarification questions and complete recommendations follow the user’s latest substantive request language; technical identifiers remain accurate.
-- The `v1.0.1` five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
-- Minimal project-scoped Codex Desktop validation covered single-agent, multi-agent, maker-checker, conditional-role, external-search, and team-creation behavior. Six core behavior gates passed with 0 minor / 0 major / 0 blocker. After project-document team state was removed, a fresh five-gate differential validation of the final build also passed with 0 minor / 0 major / 0 blocker and confirmed zero project-document writes.
-- Targeted `v1.0.1` differential checks covered explicit new projects, ordinary first requests, a clean project, and explicit continuation. Four unaffected cases passed on the preceding candidate; after the only failing path was narrowed, the final candidate passed an independent fresh protection check for that path. This is combined differential evidence, not a claim that the final candidate reran the full suite.
+- The `v1.1.0` five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
+- The frozen four-mode baseline completed 9/9 technical runs and 10/10 responses. Its independent review isolated one ambiguity in the user-visible public-Skill status contract; observations from non-invocation and member-priority paths were kept as host observations rather than attributed to a Skill that did not run.
+- After the public-Skill output contract changed only `skill-discovery.md`, a fresh targeted two-case / three-context / five-response batch passed 3/3 technical runs and independent content review with 5 pass / 0 minor / 0 major / 0 blocker.
+- A later narrow `SKILL.md` change required a replacement confirmation to state its complete safe task sequence. A fresh saved-project two-turn dynamic test independently passed with 1 pass / 0 minor / 0 major / 0 blocker and verified: create and confirm the replacement, update and confirm the affected current assignment, re-check both task states, and archive the old task last without deletion.
+- This is combined differential evidence, not a claim that this runtime reran the complete nine-case set. Earlier `v1.0.1` project-scoped Codex Desktop checks remain evidence for unchanged planning, ownership, permission, and team-creation behavior.
 - These checks are limited real-host evidence, not a statistical guarantee or cross-host validation.
 - Codex Desktop project-based usage is the primary target.
 - Entry instructions for ChatGPT Work and Claude are included, but those hosts have not been validated in practice for this release.
 - This project is not an official OpenAI, Codex, ChatGPT, or Anthropic project.
 - Compatibility, model availability, and recommendation quality may vary by host and version; no vendor endorsement or compatibility guarantee is implied.
-- This stable release continues the MIT license introduced by the public `v1.0.0-rc.9` commit.
+- This version continues the MIT license introduced by the public `v1.0.0-rc.9` commit.
 
 ## What it does not do automatically
 
-- create Agents or persistent tasks;
+- create, replace, reassign, or archive Agents or persistent tasks;
 - install or run third-party Skills;
 - connect to accounts or business systems;
 - read private data;
@@ -85,7 +90,13 @@ build-ai-team/
     └── skill-discovery.md
 ```
 
-5. Start a fresh Codex task and explicitly select Build AI Team or enter:
+5. Start a fresh Codex task and describe a substantial project that may need team planning:
+
+```text
+I want to design, build, and launch a paid web app with accounts and subscriptions. Decide whether one Agent or a team is appropriate.
+```
+
+If the host does not select the Skill automatically, use the explicit fallback:
 
 ```text
 $build-ai-team I want to design, build, and launch a paid web app with accounts and subscriptions.
@@ -105,15 +116,27 @@ Removing the Skill stops it from being loaded in future fresh tasks. It does not
 ## Example requests
 
 ```text
-$build-ai-team I only need a clickable prototype from this finalized PRD. No development is needed.
+I only need a clickable prototype from this finalized PRD. Decide whether one Agent is enough; no development is needed.
 ```
 
 ```text
-$build-ai-team Plan a CRM migration with independent read-only verification. Do not connect to the CRM yet.
+Plan a CRM migration with independent read-only verification. Do not connect to the CRM yet.
 ```
 
 ```text
-$build-ai-team 我想做一个能上架 App Store 的记账 App，请给我团队建议。
+我想做一个能上架 App Store 的记账 App。请判断需要一个 Agent 还是多个 Agent，并给我完整工作安排。
+```
+
+```text
+Our current team has a backend owner and a read-only verifier. Should I add another member for the migration, or keep the team unchanged?
+```
+
+```text
+Which model and reasoning effort should I use for a data-migration verifier?
+```
+
+```text
+Which locally available Skills fit an iOS release-readiness review?
 ```
 
 ## How to read a recommendation
@@ -127,7 +150,7 @@ $build-ai-team 我想做一个能上架 App Store 的记账 App，请给我团�
 
 ## Local Skills and public search
 
-The first recommendation separates suitable Skills exposed by the current host from unchecked public leads in a small offline index. Live public search starts only when the user asks for it, searches external sources rather than repeating the local list, and keeps the plan’s primary next step visible.
+Initial recommendations use only the current host's exposed local-Skill metadata and do not show unchecked public leads. Live public search starts only when the user asks for it, searches external sources rather than repeating the local list, and keeps an existing plan's primary next step visible.
 
 A recommendation is not installation. Installation is not permission to run scripts, log in, read private data, write, upload, publish, or delete. Review third-party Skills and their licenses before use.
 
@@ -151,7 +174,7 @@ Build AI Team is a separate Skill product. It does not replace the earlier five-
 
 ## License and official source
 
-This stable release is provided under the [MIT License](LICENSE). The license change began with the public `main` commit containing `v1.0.0-rc.9`; that version and later MIT-licensed releases may be used, copied, modified, merged, published, distributed, sublicensed, and sold subject to the license terms.
+This version is provided under the [MIT License](LICENSE). The license change began with the public `main` commit containing `v1.0.0-rc.9`; that version and later MIT-licensed releases may be used, copied, modified, merged, published, distributed, sublicensed, and sold subject to the license terms.
 
 The earlier `v1.0-beta7` public source snapshot remains governed by the custom non-open-source license included in [that exact commit](https://github.com/itsedizeng/build-ai-team/blob/b2e81d3859a169056629e78dff322cfcfbefcf31/LICENSE.md). The MIT change is not retroactive.
 

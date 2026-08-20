@@ -1,5 +1,5 @@
-f97a00e4cdae3c53c783ad3020a801b0dd05c1b0495dcd01219e5388481d7cd0  build-ai-team/SKILL.md
-04793664daee4ef70dc14123772799aa9979c62bab9db2fcd5f7a3821f392636  build-ai-team/agents/openai.yaml
-a5d543c063310fc937d2d5cafa1f14a5807cc1f5a241689407de5d2b301aa263  build-ai-team/references/curated-skills.md
+e6331dd778495ac9bebec46c6b9d30737c6829bdca1dec3562f91591eb8d26b0  build-ai-team/SKILL.md
+af2d1d2846b4334f0a228bab9634c6f42cf5aaf090f459b912bf40fa9a87becb  build-ai-team/agents/openai.yaml
+23ea37c7e3215cab83e3aa7a85a650ebddacd32a2d6c8bc99143713d6da41ae5  build-ai-team/references/curated-skills.md
 0f37ef8a2faa11a76d83cba9d711fc47bd9e07f13e3a0b2ab6873bf94d38c229  build-ai-team/references/model-routing.md
-649d687ba5417e6fd0809a999eb260e367f5866742e50688e9f3138a99b85418  build-ai-team/references/skill-discovery.md
+ac147cd77cbbfe9f4b76c423bf30e1b9b36a7f9192e417461474c42065ba46f5  build-ai-team/references/skill-discovery.md

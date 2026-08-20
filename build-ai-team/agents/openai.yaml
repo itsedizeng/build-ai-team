@@ -1,7 +1,7 @@
 interface:
   display_name: "Build AI Team"
-  short_description: "Plan roles, models, local Skills, and handoffs"
-  default_prompt: "Use $build-ai-team to recommend the smallest reliable AI team, model configurations, collaboration handoffs, and suitable local Skills for my request; search external Skills only if I ask."
+  short_description: "Plan or revise teams, models, Skills, and handoffs"
+  default_prompt: "Use $build-ai-team for my concrete AI-setup request. Match my scope: a full setup, an existing-team change, model advice, or Skill advice. Search external Skills only if I explicitly ask."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

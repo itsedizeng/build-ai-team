@@ -6,6 +6,29 @@ The project follows [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+## 1.1.0 - 2026-08-20
+
+### Changed
+
+- Allow Codex to match Build AI Team automatically for substantive requests whose structure clearly depends on team planning, professional ownership, permission separation, independent validation, or parallel work.
+- Keep `$build-ai-team` as the reliable explicit fallback because automatic Skill selection still depends on host matching.
+- Keep simple bounded direct tasks, ordinary discussion or mention, explicit negation, and `TOOLKIT_MODE=member` work outside the team-planning workflow.
+- Route matching requests to the narrowest of four modes: full setup, existing-team change, model advice, or Skill advice.
+- For a confirmed same-project team, return only an `add`, `merge`, `replace`, or `keep` delta and require precise confirmation before any persistent-task change.
+- Use only host-exposed metadata for local Skill advice; read public-search guidance and browse only after an explicit public-search request.
+- For every recommended public Skill, show a compact maintenance status and its read, write, and external-action boundary; mark unknown evidence as `unknown` rather than inferring safety.
+- Preserve the existing plan-first confirmation gate: automatic selection does not create tasks, install Skills, access private data, or perform external actions.
+- For a confirmed replacement, require the confirmation action to list the safe sequence: keep affected tasks, create and verify the replacement, update and confirm affected assignments, re-check states, and archive the old task last without deletion.
+
+### Validation status
+
+- The five-file runtime passed independent static review with 0 major / 0 minor / 0 blocker.
+- The frozen nine-case / nine-context / ten-response implicit four-mode package passed independent static review with 0 major / 0 minor / 0 blocker.
+- The baseline model batch completed 9/9 technical runs and 10/10 responses. Its original frozen content result remains historical; a later control-boundary review separated host-only observations and test-scope overreach from candidate behavior, while preserving one real public-Skill output ambiguity and one single-run model-formatting observation.
+- After changing only `skill-discovery.md`, a fresh two-case / three-context / five-response differential batch passed 3/3 technical runs and independent content review with 5 pass / 0 minor / 0 major / 0 blocker.
+- A later narrow `SKILL.md` change was independently checked with a fresh saved-project two-turn dynamic replacement test: 1 pass / 0 minor / 0 major / 0 blocker. It verified creation and acknowledgement of the replacement, acknowledgement of the affected current assignment, a state re-check, and archival of the old task last without deletion.
+- This is combined differential evidence, not a claim that the final candidate reran the complete nine-case set. Existing `v1.0.1` evidence applies only to unchanged behavior.
+
 ## 1.0.1 - 2026-08-15
 
 ### Changed

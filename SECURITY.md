@@ -16,6 +16,7 @@ The Skill does not guarantee the safety of third-party Skills or external servic
 
 | Version | Supported |
 |---|---|
+| `1.1.x` | Yes |
 | `1.0.x` | Yes |
 | `1.0.0-rc.x` | No |
 | `1.0-beta.x` | No |

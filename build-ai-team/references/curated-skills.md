@@ -1,15 +1,14 @@
 # Curated Skill Leads
 
-Use this file only as an offline source of public leads for the first recommendation. It does not replace current-version review before installation. Recommend at most 3 Skills; this is a ceiling, not a quota. Recommend none when no item would materially help.
+Use this file only as an offline source of public leads after the user explicitly requests public Skill search or verification. It is not a default local recommendation source and does not replace current-version review before recommendation or installation. Recommend at most 3 Skills; this is a ceiling, not a quota. Recommend none when no item would materially help.
 
 ## Usage rules
 
-- Review the Skill names and descriptions directly exposed by the current platform before this index.
+- Treat locally visible Skills already shown in the conversation only as an exclusion list; do not repeat or re-scan them.
 - `Last reviewed` means that the original source and primary capability were checked read-only on that date. It does not mean the item is still current and is not a security certification.
-- In user-facing output, show only name, accurate status, original link, and reason. Do not expose internal labels such as “curated lead,” “direct match,” or “related addition.”
-- Localize status text to the user’s response language by translating this English semantic pattern naturally: `[Skill name](original source) (public recommendation; not checked live; installation status unknown) — reason.` Preserve the exact Skill identifier and source URL, and do not show the English pattern beside its translation.
+- Do not expose an offline lead to the user as a recommendation. Only after the current review required by `skill-discovery.md` is complete may a candidate use that file's user-facing status pattern. If current review does not pass, do not recommend the lead.
 - Say the natural equivalent of `available locally` only when the current platform directly shows the Skill as available or callable.
-- If the user asks for current verification or installation, use `skill-discovery.md` to inspect the current tree, references, scripts, license, maintenance, and permission risks.
+- Use `skill-discovery.md` to inspect the current tree, references, scripts, license, maintenance, and permission risks before recommending a public candidate. Installation remains a later, separately confirmed action.
 
 ## Current public leads
 

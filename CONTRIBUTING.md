@@ -29,7 +29,7 @@ For a runtime change:
 
 1. Explain the user problem and why the existing general model behavior is insufficient.
 2. Prefer guidance over rigid industry templates.
-3. Preserve explicit invocation, member-mode priority, unique ownership, independent-review separation, confirmation state, and external-action permission boundaries.
+3. Preserve the automatic-invocation boundary, the `$build-ai-team` explicit fallback, member-mode priority, unique ownership, independent-review separation, confirmation state, and external-action permission boundaries. Simple bounded direct tasks, ordinary discussion or mention, and explicit negation must remain outside the planning workflow.
 4. Use the platform’s actual persistent tasks as live team state. Do not add a roster, plan, or project-document team-state system.
 5. Update the English runtime semantic contract and verify localization behavior whenever a user-visible label or action changes.
 6. Add or update realistic tests without leaking the intended answer into the public prompt; keep the scope proportional to the behavior changed.
